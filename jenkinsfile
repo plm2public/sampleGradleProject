@@ -1,0 +1,25 @@
+pipeline {
+  // Mark the code checkout 'stage'....
+  stage 'Stage Checkout'
+
+  // Checkout code from repository and update any submodules
+  checkout scm
+   
+
+  stage 'Stage Build'
+
+  //branch name from Jenkins environment variables
+  echo "My branch is: ${env.BRANCH_NAME}"
+
+
+  //build your gradle flavor, passes the current build number as a parameter to gradle
+  sh "./gradlew clean assemble"
+  
+    stage 'Stage Test'
+  sh "./gradlew test "
+  
+  stage 'Stage Upload To Fabric'
+  sh "call uploadArchives -PBUILD_NUMBER=${env.BUILD_NUMBER}"
+}
+
+
